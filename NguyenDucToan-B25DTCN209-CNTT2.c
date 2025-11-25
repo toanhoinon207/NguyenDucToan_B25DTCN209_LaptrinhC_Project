@@ -10,6 +10,13 @@ struct Product{
 	int status;
 };
 
+int existId(char id[]);
+void addProduct();
+void updateProduct();
+void changeStatus();
+void searchProduct();
+void toLower(char s[]);
+
 struct Product products[MAX]={
 	{"P01","Sua Tuoi Vinamilk","Hop",120,1},
     {"P02","Mi Hao Hao","Thung",300,1},
@@ -118,7 +125,7 @@ void updateProduct(){
 	char newUnit[10];
 	while(1){
 		printf("Nhap don vi hang hoa moi: ");
-		fgets(newUnit,50,stdin);
+		fgets(newUnit,10,stdin);
 		newUnit[strcspn(newUnit,"\n")]=0;
 		if(strlen(newUnit)==0){
 			printf("Don vi hang hoa khong duoc de trong!!\n");
@@ -164,22 +171,22 @@ void changeStatus(){
 		return;
 	}
 	printf("Trang thai hien tai: %d\n",products[index].status);
-	int newStatus;
-	while(1){
-		printf("Nhap trang thai moi: ");
-		if(scanf("%d",&newStatus)!=1){
-			printf("Vui long nhap so!!\n");
-			while(getchar()!='\n');
-			continue;
-		}
-		if(newStatus!=0&&newStatus!=1){
-			printf("Vui long nhap 0 hoac 1!!\n");
-			continue;
-		}
-		break;
+	if(products[index].status==1){
+		products[index].status=0;
+		printf("Doi trang thai hang hoa %s thanh cong!!\n",productId);
+	}else{
+		printf("Hang hoa %s da duoc khoa!!\n",productId);
 	}
-	products[index].status=newStatus;
-	printf("Doi trang thai hang hoa %s thanh cong!!\n",productId);
+}
+
+void toLower(char s[]){
+    int i=0;
+    while(s[i]!='\0'){
+        if(s[i]>='A'&&s[i]<='Z'){
+            s[i]=s[i]+32;
+        }
+        i++;
+    }
 }
 
 void searchProduct(){
@@ -188,13 +195,17 @@ void searchProduct(){
 	fflush(stdin);
 	fgets(sch,50,stdin);
 	sch[strcspn(sch,"\n")]=0;
+	toLower(sch);
 	int found=0;
 	printf("-----------KET QUA TRA CUU-----------\n");
+	printf("+------------+------------------------------+------------+-------------------+------------+\n");
+	printf("| Ma         | Ten                          | Don vi     | So luong ton kho  | Trang thai |\n");
+	printf("+------------+------------------------------+------------+-------------------+------------+\n");
 	for(int i=0;i<count;i++){
-		if(strcmp(products[i].productId,sch)==0||strstr(products[i].name,sch)!=0){
-			printf("+------------+------------------------------+------------+-------------------+------------+\n");
-			printf("| Ma         | Ten                          | Don vi     | So luong ton kho  | Trang thai |\n");
-			printf("+------------+------------------------------+------------+-------------------+------------+\n");
+		char lowerName[50];
+        strcpy(lowerName,products[i].name);
+        toLower(lowerName);
+		if(strcmp(products[i].productId,sch)==0||strstr(lowerName,sch)!=0){
 			printf("| %-10s | %-28s | %-10s | %-17d | %-10d |\n",
 	        products[i].productId,
 	        products[i].name,
