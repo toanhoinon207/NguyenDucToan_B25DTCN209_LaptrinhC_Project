@@ -147,7 +147,69 @@ void updateProduct(){
 }
 
 void changeStatus(){
-	
+	char productId[10];
+	int index=-1;
+	printf("Nhap ID hang hoa can doi trang thai: ");
+	fflush(stdin);
+	fgets(productId,10,stdin);
+	productId[strcspn(productId,"\n")]=0;
+	for(int i=0;i<count;i++){
+		if(strcmp(products[i].productId,productId)==0){
+			index=i;
+			break;
+		}
+	}
+	if(index==-1){
+		printf("Vat tu %s khong ton tai trong danh sach!!\n",productId);
+		return;
+	}
+	printf("Trang thai hien tai: %d\n",products[index].status);
+	int newStatus;
+	while(1){
+		printf("Nhap trang thai moi: ");
+		if(scanf("%d",&newStatus)!=1){
+			printf("Vui long nhap so!!\n");
+			while(getchar()!='\n');
+			continue;
+		}
+		if(newStatus!=0&&newStatus!=1){
+			printf("Vui long nhap 0 hoac 1!!\n");
+			continue;
+		}
+		break;
+	}
+	products[index].status=newStatus;
+	printf("Doi trang thai hang hoa %s thanh cong!!\n",productId);
+}
+
+void searchProduct(){
+	char sch[50];
+	printf("Nhap ID hoac ten hang hoa can tra cuu: ");
+	fflush(stdin);
+	fgets(sch,50,stdin);
+	sch[strcspn(sch,"\n")]=0;
+	int found=0;
+	printf("-----------KET QUA TRA CUU-----------\n");
+	for(int i=0;i<count;i++){
+		if(strcmp(products[i].productId,sch)==0||strstr(products[i].name,sch)!=0){
+			printf("+------------+------------------------------+------------+-------------------+------------+\n");
+			printf("| Ma         | Ten                          | Don vi     | So luong ton kho  | Trang thai |\n");
+			printf("+------------+------------------------------+------------+-------------------+------------+\n");
+			printf("| %-10s | %-28s | %-10s | %-17d | %-10d |\n",
+	        products[i].productId,
+	        products[i].name,
+	        products[i].unit,
+	        products[i].qty,
+	        products[i].status);
+			printf("+------------+------------------------------+------------+-------------------+------------+\n");
+			found++;
+		}
+	}
+	if(found==0){
+		printf("Khong tim thay vat tu!!\n");
+	}else{
+		printf("Tim thay tong so %d vat tu!!\n",found);
+	}
 }
 
 int main(){
@@ -172,6 +234,12 @@ int main(){
 			break;
 		case 2:
 			updateProduct();
+			break;
+		case 3:
+			changeStatus();
+			break;
+		case 4:
+			searchProduct();
 			break;
 		case 9:
 			printf("Thoat chuong trinh!!\n");
