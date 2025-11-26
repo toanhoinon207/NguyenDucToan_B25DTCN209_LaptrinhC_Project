@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #define MAX 100
 
 struct Product{
@@ -10,19 +11,93 @@ struct Product{
 	int status;
 };
 
+struct Product products[MAX]={
+	{"P01","Sua Tuoi Vinamilk","Hop",120,1},
+    {"P02","Mi Hao Hao","Thung",300,1},
+    {"P03","Pepsi","Chai",150,1},
+    {"P04","Coca Cola","Chai",200,1},
+    {"P05","Sprite","Chai",180,1},
+    {"P06","Nuoc Tang Luc Redbull","Lon",250,1},
+    {"P07","Nuoc Tang Luc Monster","Lon",160,1},
+    {"P08","Tra Xanh Khong Do","Chai",220,1},
+    {"P09","Tra O Do","Chai",140,1},
+    {"P10","Bim Bim Oishi","Goi",500,1},
+    {"P11","Bim Bim Poca","Goi",450,1},
+    {"P12","Snack Khoai Tay Lay's","Goi",320,1},
+    {"P13","Banh Mi Sandwich","Tui",80,1},
+    {"P14","Banh Bong Lan","Hop",95,1},
+    {"P15","Keo Muc","Goi",210,1},
+    {"P16","Keo Dua Ben Tre","Goi",170,1},
+    {"P17","Keo Socola","Goi",300,1},
+    {"P18","Mi Trieu Khoai","Thung",260,1},
+    {"P19","Mi Omachi","Thung",280,1},
+    {"P20","Bot Giat OMO","Tui",140,1},
+    {"P21","Bot Giat Ariel","Tui",135,1},
+    {"P22","Nuoc Rua Chen Sunlight","Chai",190,1},
+    {"P23","Nuoc Rua Tay Lifebuoy","Chai",160,1},
+    {"P24","Nuoc Xa Downy","Chai",200,1},
+    {"P25","Khau Trang Y Te","Hop",350,1},
+    {"P26","Giay Ve Sinh Kleenex","Cuon",130,1},
+    {"P27","Giay Ve Sinh Bless You","Cuon",115,1},
+    {"P28","Sua Dabaco","Hop",190,1},
+    {"P29","Duong Bien","Kg",250,1},
+    {"P30","Muoi Iot","Kg",280,1}
+};
+int count=30;
+
 int existId(char id[]);
 void addProduct();
 void updateProduct();
 void changeStatus();
 void searchProduct();
 void toLower(char s[]);
+void showProduct();
+void sortProduct();
 
-struct Product products[MAX]={
-	{"P01","Sua Tuoi Vinamilk","Hop",120,1},
-    {"P02","Mi Hao Hao","Thung",300,1},
-    {"P03","Pepsi","Chai",150,1}
-};
-int count=3;
+int main(){
+	int choice;
+	do{
+		printf("+-----QUAN LY CUA HANG TIEN LOI-----+\n");
+		printf("|1. Them mat hang moi.              |\n");
+		printf("|2. Cap nhat thong tin.             |\n");
+		printf("|3. Quan ly trang thai (Khoa/Xoa).  |\n");
+		printf("|4. Tra cuu (Tim kiem).             |\n");
+		printf("|5. Danh sach (Phan trang).         |\n");
+		printf("|6. Sap xep danh sach.              |\n");
+		printf("|7. Giao dich xuat/nhap hang hoa.   |\n");
+		printf("|8. Lich su xuat/nhap.              |\n");
+		printf("|9. Thoat.                          |\n");
+		printf("+-----------------------------------+\n");
+		printf("Xin moi nhap lua chon: ");
+		scanf("%d",&choice);
+	switch(choice){
+		case 1:
+			addProduct();
+			break;
+		case 2:
+			updateProduct();
+			break;
+		case 3:
+			changeStatus();
+			break;
+		case 4:
+			searchProduct();
+			break;
+		case 5:
+			showProduct();
+			break;
+		case 6: 
+			sortProduct();
+			break;
+		case 9:
+			printf("Thoat chuong trinh!!\n");
+			return 0;
+		default:
+			printf("Lua chon khong hop le!!\n");		
+	}
+	}while(choice!=9);
+	return 0;
+}
 
 int existId(char id[]){
 	for(int i=0;i<count;i++){
@@ -198,21 +273,24 @@ void searchProduct(){
 	toLower(sch);
 	int found=0;
 	printf("-----------KET QUA TRA CUU-----------\n");
-	printf("+------------+------------------------------+------------+-------------------+------------+\n");
-	printf("| Ma         | Ten                          | Don vi     | So luong ton kho  | Trang thai |\n");
-	printf("+------------+------------------------------+------------+-------------------+------------+\n");
+	printf("+------------+------------------------------+------------+-------------------+------------------+\n");
+	printf("| Ma         | Ten                          | Don vi     | So luong ton kho  | Trang thai       |\n");
+	printf("+------------+------------------------------+------------+-------------------+------------------+\n");
 	for(int i=0;i<count;i++){
+		char lowerID[20];
+        strcpy(lowerID,products[i].productId);
+        toLower(lowerID);
 		char lowerName[50];
         strcpy(lowerName,products[i].name);
         toLower(lowerName);
-		if(strcmp(products[i].productId,sch)==0||strstr(lowerName,sch)!=0){
-			printf("| %-10s | %-28s | %-10s | %-17d | %-10d |\n",
+		if(strcmp(lowerID,sch)==0||strstr(lowerName,sch)!=NULL){
+			printf("| %-10s | %-28s | %-10s | %-17d | %-16s |\n",
 	        products[i].productId,
 	        products[i].name,
 	        products[i].unit,
 	        products[i].qty,
-	        products[i].status);
-			printf("+------------+------------------------------+------------+-------------------+------------+\n");
+	        products[i].status?"Con su dung":"Het han su dung");
+			printf("+------------+------------------------------+------------+-------------------+------------------+\n");
 			found++;
 		}
 	}
@@ -223,41 +301,97 @@ void searchProduct(){
 	}
 }
 
-int main(){
+void showProduct(){
+	if(count==0){
+		printf("Danh sach hang hoa rong!!\n");
+		return;
+	}
+	int page=1;
+	int itemPerPage=10;
+	int index=0;
+	char ch;
+	int end;
+	int kq=count/itemPerPage;
+    int totalPage=(count%itemPerPage==0)?kq:kq+1;
+	while(1){
+		printf("Moi ban nhap so trang can xem (1-%d): ",totalPage);
+		scanf("%d",&page);
+		index=(page-1)*itemPerPage;
+		end=index+itemPerPage;
+		printf("Trang %d/%d: \n\n",page,totalPage);
+		printf("+------------+------------------------------+------------+-------------------+------------------+\n");
+		printf("| Ma         | Ten                          | Don vi     | So luong ton kho  | Trang thai       |\n");
+		printf("+------------+------------------------------+------------+-------------------+------------------+\n");
+		for(int i=index;i<count&&i<end;i++){
+			printf("| %-10s | %-28s | %-10s | %-17d | %-16s |\n",
+	        products[i].productId,
+	        products[i].name,
+	        products[i].unit,
+	        products[i].qty,
+	        products[i].status?"Con su dung":"Het han su dung");
+			printf("+------------+------------------------------+------------+-------------------+------------------+\n");
+			index++;
+		}
+		fflush(stdin);
+       	printf("Ban co muon thoat khong (y/n)? ");
+       	ch=getchar();
+       	if(ch=='y'||ch=='Y'){
+           break;
+		}
+	}
+}
+
+void sortProduct(){
+	if(count==0){
+		printf("Danh sach hang hoa rong!!\n");
+		return;
+	}
 	int choice;
-	do{
-		printf("+-----QUAN LY CUA HANG TIEN LOI-----+\n");
-		printf("|1. Them mat hang moi.              |\n");
-		printf("|2. Cap nhat thong tin.             |\n");
-		printf("|3. Quan ly trang thai (Khoa/Xoa).  |\n");
-		printf("|4. Tra cuu (Tim kiem).             |\n");
-		printf("|5. Danh sach (Phan trang).         |\n");
-		printf("|6. Sap xep danh sach.              |\n");
-		printf("|7. Giao dich xuat/nhap hang hoa.   |\n");
-		printf("|8. Lich su xuat/nhap.              |\n");
-		printf("|9. Thoat.                          |\n");
-		printf("+-----------------------------------+\n");
-		printf("Xin moi nhap lua chon: ");
-		scanf("%d",&choice);
+	printf("+--------SAP XEP HANG HOA-------+\n");
+	printf("|1. Sap xep theo ten (A-Z).     |\n");
+	printf("|2. Sap xep tang theo so luong. |\n");
+	printf("+-------------------------------+\n");
+	printf("Xin moi nhap lua chon: ");
+	scanf("%d",&choice);
 	switch(choice){
 		case 1:
-			addProduct();
+			for(int i=0;i<count-1;i++){
+				for(int j=i+1;j<count;j++){
+					if(strcmp(products[i].name,products[j].name)>0){
+						struct Product temp=products[i];
+						products[i]=products[j];
+						products[j]=temp;
+					}
+				}
+			}
+			printf("Da sap xep theo ten (A-Z) thanh cong!!\n");
 			break;
 		case 2:
-			updateProduct();
+			for(int i=0;i<count-1;i++){
+				for(int j=i+1;j<count;j++){
+					if(products[i].qty>products[j].qty){
+						struct Product temp=products[i];
+						products[i]=products[j];
+						products[j]=temp;
+					}
+				}
+			}
+			printf("Da sap xep theo so luong thanh cong!!\n");
 			break;
-		case 3:
-			changeStatus();
-			break;
-		case 4:
-			searchProduct();
-			break;
-		case 9:
-			printf("Thoat chuong trinh!!\n");
-			return 0;
 		default:
-			printf("Lua chon khong hop le!!\n");		
+			printf("Lua chon khong hop le!!\n");
+			return;
 	}
-	}while(choice!=9);
-	return 0;
+	printf("+------------+------------------------------+------------+-------------------+------------------+\n");
+	printf("| Ma         | Ten                          | Don vi     | So luong ton kho  | Trang thai       |\n");
+	printf("+------------+------------------------------+------------+-------------------+------------------+\n");
+	for(int i=0;i<count;i++){
+		printf("| %-10s | %-28s | %-10s | %-17d | %-16s |\n",
+	    products[i].productId,
+	    products[i].name,
+	    products[i].unit,
+	    products[i].qty,
+	    products[i].status?"Con su dung":"Het han su dung");
+		printf("+------------+------------------------------+------------+-------------------+------------------+\n");
+	}
 }
