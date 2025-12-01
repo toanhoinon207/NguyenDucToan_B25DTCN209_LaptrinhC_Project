@@ -360,7 +360,6 @@ void showProduct(){
 	        products[i].qty,
 	        products[i].status?"Con su dung":"Het han su dung");
 			printf("+------------+------------------------------+------------+-------------------+------------------+\n");
-			index++;
 		}
 		fflush(stdin);
        	printf("Ban co muon thoat khong (y/n)? ");
@@ -494,9 +493,13 @@ void transaction(){
 					printf("So luong hang hoa can xuat khong duoc de trong!!\n");
 					continue;
 				}
+				qty=atoi(amount);
+				if(qty<=0){
+					printf("So luong xuat khong hop le!!\n");
+					continue;
+				}
 				break;
 			}
-			qty=atoi(amount);
 			if(qty>products[index].qty){
 				printf("So luong hang hoa %s vuot qua so luong hien co!!\n",productId);
 				return;
